@@ -27,7 +27,7 @@ All this makes testing on _macOS_, _iOS_, or _Linux_ really simple.
 ### Checking balances
 
 This example checks the balances of all the accounts on the node. It also demonstrates how
-my micro-framework, (Wei)[https://github.com/KevinVitale/Wei] can be used to convert `String`
+my micro-framework, [Wei](https://github.com/KevinVitale/Wei) can be used to convert `String`
 values:
 
 #### Code
@@ -123,5 +123,5 @@ func testSendTransaction() throws {
 
 `Web3Kit` is part of a suite of _Ethereum_ tools and frameworks built for those who ❤️ Swift.
 
-- (WalletKit)[https://github.com/KevinVitale/WalletKit]
-- (Wei)[https://github.com/KevinVitale/Wei]
+- [WalletKit](https://github.com/KevinVitale/WalletKit)
+- [Wei](https://github.com/KevinVitale/Wei)
