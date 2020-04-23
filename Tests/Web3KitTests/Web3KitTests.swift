@@ -106,7 +106,7 @@ final class Web3KitTests: XCTestCase {
         let payload = [
             "to"    :"0x0cbe55df6ec0b2ad41274dad7ccf17fc632cf749",
             "from"  :"0x3e07d9AE4662CA5A541746Be369354DDAE09903C",
-            "value" :100(as: .ether).hexString,
+            "value" :1(as: .ether).hexString,
         ]
         
         let receipt = web3
@@ -119,7 +119,9 @@ final class Web3KitTests: XCTestCase {
         
         switch receipt {
         case .success(let result?):
-            print(result)
+            result
+                .enumerated()
+                .forEach({ print($0) })
         case .failure(let error as JSONRPCError):
             print(error.message)
         default: ()
