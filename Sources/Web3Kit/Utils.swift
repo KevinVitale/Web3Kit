@@ -2,7 +2,7 @@ import Foundation
 
 /* TODO: make 'internal' */
 public func waitFor<T,ErrorType>(_ body: (@escaping (Result<T,ErrorType>) -> Void) -> Void) -> Result<T,Swift.Error> {
-    Result { try await(body) }
+    Result { try _await(body) }
 }
 
 extension StringProtocol {
