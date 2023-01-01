@@ -91,15 +91,9 @@ extension Collection where Element: StringProtocol {
     }
 }
 
-extension BigUInt: ExpressibleByPrefixedHexString {
+extension BInt: ExpressibleByPrefixedHexString {
     public init?<S: StringProtocol>(hex: S) {
-        self.init(hex.dropHexPrefix(), radix: 16)
-    }
-}
-
-extension BigInt: ExpressibleByPrefixedHexString {
-    public init?<S: StringProtocol>(hex: S) {
-        self.init(hex.dropHexPrefix(), radix: 16)
+      self.init(String(hex.dropHexPrefix()), radix: 16)
     }
 }
 

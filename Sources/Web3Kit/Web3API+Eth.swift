@@ -29,15 +29,19 @@ extension Eth {
                 case startingBlock, currentBlock, highestBlock
             }
             
-            let startingBlock :BigUInt
-            let currentBlock  :BigUInt
-            let highestBlock  :BigUInt
+            let startingBlock :BInt
+            let currentBlock  :BInt
+            let highestBlock  :BInt
             
             init(decode decoder: Decoder) throws {
-                let container = try decoder.container(keyedBy: CodingKeys.self)
-                self.startingBlock = BigUInt(hex: try container.decode(String.self, forKey: .startingBlock))!
-                self.currentBlock  = BigUInt(hex: try container.decode(String.self, forKey: .currentBlock))!
-                self.highestBlock  = BigUInt(hex: try container.decode(String.self, forKey: .highestBlock))!
+              try self.init(from: decoder)
+            }
+          
+            public init(from decoder: Decoder) throws {
+              let container = try decoder.container(keyedBy: CodingKeys.self)
+              self.startingBlock = BInt(hex: try container.decode(String.self, forKey: .startingBlock))!
+              self.currentBlock  = BInt(hex: try container.decode(String.self, forKey: .currentBlock))!
+              self.highestBlock  = BInt(hex: try container.decode(String.self, forKey: .highestBlock))!
             }
         }
     }
