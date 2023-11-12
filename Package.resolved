@@ -1,34 +1,32 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "AnyCodable",
-        "repositoryURL": "https://github.com/Flight-School/AnyCodable",
-        "state": {
-          "branch": null,
-          "revision": "862808b2070cd908cb04f9aafe7de83d35f81b05",
-          "version": "0.6.7"
-        }
-      },
-      {
-        "package": "BigInt",
-        "repositoryURL": "https://github.com/leif-ibsen/BigInt.git",
-        "state": {
-          "branch": null,
-          "revision": "1e0fb2ff017e38f7fa9a428dd4db1d830eed9483",
-          "version": "1.13.1"
-        }
-      },
-      {
-        "package": "Wei",
-        "repositoryURL": "https://github.com/KevinVitale/Wei.git",
-        "state": {
-          "branch": "leif-ibsen/BigInt",
-          "revision": "eebd3621f7010c6855a6bb9220d0daf36e8cf52c",
-          "version": null
-        }
+  "pins" : [
+    {
+      "identity" : "anycodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Flight-School/AnyCodable",
+      "state" : {
+        "revision" : "862808b2070cd908cb04f9aafe7de83d35f81b05",
+        "version" : "0.6.7"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "bigint",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/attaswift/BigInt.git",
+      "state" : {
+        "revision" : "0ed110f7555c34ff468e72e1686e59721f2b0da6",
+        "version" : "5.3.0"
+      }
+    },
+    {
+      "identity" : "wei",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/KevinVitale/Wei.git",
+      "state" : {
+        "revision" : "623a3b621e7179dca090489c4e8c4ce3281d5ec6",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 2
 }

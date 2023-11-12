@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Flight-School/AnyCodable", from: "0.6.7"),
-        .package(url: "https://github.com/KevinVitale/Wei.git", branch: "leif-ibsen/BigInt"),
+        .package(url: "https://github.com/KevinVitale/Wei.git", from: "1.0.0"),
     ],
     targets: [
         .target(name: "Web3Kit", dependencies: [
