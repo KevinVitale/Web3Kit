@@ -1,17 +1,19 @@
 import Foundation
 
-public struct ClientConfiguration: Codable, ExpressibleByStringLiteral {
+extension Client {
+  public struct Configuration: Codable, ExpressibleByStringLiteral {
     private let components: URLComponents
     
     public init(scheme: String = "http", host: String, port: Int = 8545) {
-        self.components = URLComponents(string: "\(scheme)://\(host):\(port)")!
+      self.components = URLComponents(string: "\(scheme)://\(host):\(port)")!
     }
     
     public init(stringLiteral value: String) {
-        components = URLComponents(string: value)!
+      components = URLComponents(string: value)!
     }
     
     public var url: URL {
-        components.url!
+      components.url!
     }
+  }
 }

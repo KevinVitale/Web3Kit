@@ -4,139 +4,157 @@ import AnyCodable
 import Wei
 
 // Conveniences for creating new clients --------------------------------------
-extension ClientConfiguration {
-    static let localNode  :ClientConfiguration = "http://192.168.1.111:8545"
-    static let localHost  :ClientConfiguration = "http://127.0.0.1:8545"
+extension Client.Configuration {
+  static let localNode: Self = "http://192.168.1.74:8545"
+  static let localHost: Self = "http://127.0.0.1:8545"
 }
 
-final class Web3KitTests: XCTestCase {
-    func testProtocolVersion() throws {
-        let web3 = Client<Web3>(.localHost)
-        
-        let version = try web3.eth(request: .protocolVersion()).hex(to: Int.self).get()
-        print(version)
+final class EthTests: XCTestCase {
+  let web3 = Web3Client(.localHost)
+  var accounts: [String] = []
+  
+  var account: String {
+    self.accounts.first ?? ""
+  }
+  
+  override func setUp() async throws {
+    self.accounts = try await web3.eth(request: .accounts()).result ?? []
+  }
+  
+  func testSyncing() async throws {
+    let syncing = try await web3.eth(request: .syncing()).result ?? false
+    print(syncing)
+  }
+  
+  func testCoinbase() async throws {
+    let web3 = Web3Client(.localNode)
+    do {
+      let coinbase = try await web3.eth(request: .coinbase()).result ?? ""
+      print(coinbase)
+    } catch let error as JSONRPC.Error {
+      print("Error:", error.message)
     }
-    
-    func testBlockNumbers() throws {
-        let web3 = Client<Web3>(.localNode)
-        
-        let blocks = web3
-            .eth(request:
-                .block(.latest,    id: 1), // current block
-                .block(.earliest,  id: 2), // genesis block
-                .block(.pending,   id: 3), // pending block
-                .block(.number(1), id: 4)  // certain block
-            )
-            .cast(to: [String:Any].self)
-            .map({ $0.enumerated() })
-
-        switch blocks {
-        case .success(let responses):
-            responses
-                .map({ ($0.offset, $0.element) })
-                .forEach({
-                    // request id
-                    print($0.0 + 1)
-                    
-                    // key-value
-                    $0.1.forEach({ print($0) })
-                })
-
-        case .failure(let error as JSONRPCError):
-            print(error)
-            
-        default:
-            (/* no-op */)
-        }
+  }
+  
+  func testChainId() async throws {
+    let chainId = try await web3.eth(request: .chainId()).result ?? ""
+    print(chainId)
+  }
+  
+  func testMining() async throws {
+    do {
+      let mining = try await web3.eth(request: .mining()).result ?? false
+      print(mining)
+    } catch let error as JSONRPC.Error {
+      print("Error:", error.message)
     }
+  }
+  
+  func testHashrate() async throws {
+    let hashrate = try await web3.eth(request: .hashrate()).result ?? ""
+    print(hashrate)
+  }
+  
+  func testGasPrice() async throws {
+    let gasPrice = try await web3.eth(request: .gasPrice()).result ?? ""
+    print(gasPrice)
+  }
+  
+  func testAccounts() async throws {
+    let accounts = try await web3.eth(request: .accounts()).result ?? []
+    print(try accounts.prettyPrinted())
+  }
+  
+  func testBlock() async throws {
+    let balance = try await web3.eth(request: .block()).result ?? [:]
+    print(try! balance.prettyPrinted())
+  }
+  
+  func testBalanceForAddress() async throws {
+    let balance = try await web3.eth(request: .balance(for: account)).result ?? ""
+    print(balance(as: .wei).to(.ether))
+  }
+  
+  func testStorageForAddress() async throws {
+    XCTFail("Not yet implemented: \(#function)")
+  }
+  
+  func testTransactionCountForAccount() async throws {
+    let count = try await web3.eth(request: .transactionCount(for: account)).result ?? ""
+    print(count)
+  }
+  
+  func testTransactionCountByNumber() async throws {
+    let count = try await web3.eth(request: .transactionCount(at: .earliest)).result ?? ""
+    print(count)
+  }
+  
+  func testUncleCount() async throws {
+    let count = try await web3.eth(request: .uncleCount()).result ?? ""
+    print(count)
+  }
+  
+  func testCode() async throws {
+    let web3 = Web3Client(.localHost)
+    let usdc = "0xa2327a938Febf5FEC13baCFb16Ae10EcBc4cbDCF"
+    let code = try await web3.eth(request: .code(for: usdc)).result ?? ""
+    print(code)
+  }
+  
+  func testSignMessage() async throws {
+    let signature = try await web3.eth(request: .signMessage("0xdeadbeef", for: account)).result ?? ""
+    print(signature)
+  }
+  
+  func testSignAndSendRawTransaction() async throws {
+  }
+  
+  func testTransactionByHash() async throws {
+    let block = try await web3.eth(request: .block()).result ?? [:]
+    let txHash = (block["transactions"]?.value as? [String] ?? []).first ?? ""
+    let txByHash = try await web3.eth(request: .transaction(by: txHash)).value as! NSDictionary
+    print(txByHash)
+  }
+  
+  func testBlockAndTransactions() async throws {
+    let block = try await web3.eth(request: .block()).result ?? [:]
+    print(try block.prettyPrinted())
     
+    let txHash = (block["transactions"]?.value as? [String] ?? []).first ?? ""
+    let txByHash = try await web3.eth(request: "getTransactionByHash", parameters: [txHash]).value as? [String:Any]
+    print((txByHash as? NSDictionary)!)
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    func testGetBalances() throws {
-        let web3 = Client<Web3>(.localHost)
-
-        let block = try web3
-            .eth(request: .block(.latest, fullResponse: false))
-            .cast(to: [String:Any].self).get()!
-        
-        print(Int(hex: (block["number"] as! String))!)
-        print((block["gasUsed"] as? String)!(as: .gas))
-        
-        let tx = (block["transactions"] as? [String]) ?? []
-        print(tx.count)
-    }
-    
-    func testAccountBalances() throws {
-        let web3 = Client<Web3>(.localHost)
-        
-        let accounts = try web3
-            .eth(request: .accounts())
-            .get()
-            .result ?? []
-        
-        let balances = try web3
-            .eth(request: .getBalances(addresses: accounts))
-            .hex(to: Wei.self)
-            .get()
-        
-        balances
-            .enumerated()
-            .map({ (accounts[$0.offset], $0.element.to(.ether)) })
-            .forEach {
-                print($0)
-        }
-    }
-    
-    func testSendTransaction() throws {
-        let web3 = Client<Web3>(.localHost)
-        let payload = [
-            "to"    :"0x0cbe55df6ec0b2ad41274dad7ccf17fc632cf749",
-            "from"  :"0x3e07d9AE4662CA5A541746Be369354DDAE09903C",
-            "value" :1(as: .ether).hexString,
-        ]
-        
-        let receipt = web3
-            .eth(request: "sendTransaction", parameters: [payload], id: 1)
-            .cast(to: String.self)
-            .flatMap({
-                txHash in web3.eth(request: "getTransactionReceipt", parameters: [txHash ?? ""])
-            })
-            .cast(to: [String:Any].self)
-        
-        switch receipt {
-        case .success(let result?):
-            result
-                .enumerated()
-                .forEach({ print($0) })
-        case .failure(let error as JSONRPCError):
-            print(error.message)
-        default: ()
-        }
-    }
-
-    func testSignTransactions() throws {
-        let web3 = Client<Web3>(.localHost)
-        switch web3.eth(request: .sign(address: "0x3e07d9AE4662CA5A541746Be369354DDAE09903C",
-                                       message: "hello world"))
-        {
-        case .success(let response):
-            print(response)
-        case .failure(let error):
-            print(error)
-        }
-    }
+    let blockHash = txByHash?["blockHash"] as? String ?? ""
+    let index = txByHash?["transactionIndex"] as? String ?? ""
+    let blockByHash = try await web3.eth(request: "getTransactionByBlockHashAndIndex", parameters: [blockHash, index]).value as? [String:Any]
+    print((blockByHash as? NSDictionary)!)
+  }
+  
+  func testSendTransaction() async throws {
+    let transaction = [
+      "to": account,
+      "from": account,
+      "value": 1(as: .ether).hexString
+    ]
+    let result = try await web3.eth(request: "sendTransaction", parameters: [transaction]).result?.value as? String ?? ""
+    print(result)
+  }
+  
+  func testBatchRequests() async throws {
+    let responses = try await web3.eth(request: "syncing", "accounts", "blockNumber")
+    try responses.throw()
+    try responses.results
+      .forEach({ print(try $0.prettyPrinted()) })
+  }
+  
+  func testMultipleBlocks() async throws {
+    try await web3.eth(request:
+      .block(.latest, requestId: 1),
+      .block(.earliest, requestId: 2),
+      .block(.pending, requestId: 3),
+      .block(.number(1), requestId: 4)
+    ).results.forEach({
+      print(try $0.prettyPrinted())
+    })
+  }
 }
