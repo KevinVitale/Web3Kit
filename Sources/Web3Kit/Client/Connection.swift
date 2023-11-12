@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
+#endif
 import AnyCodable
 
 extension Client {
@@ -34,7 +37,23 @@ extension Client {
      */
     private func request<T: Encodable, R: Decodable>(_ jsonRequest: T) async throws -> R {
       let urlRequest = urlRequest(jsonRequest: jsonRequest)
+      
+      #if canImport(FoundationNetworking)
+      let data = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Data, Error>) in
+        let task = session.dataTask(with: urlRequest) { data, response, error in
+          if let error = error {
+            continuation.resume(throwing: error)
+            return
+          } else {
+            continuation.resume(returning: (data ?? Data()))
+          }
+          
+        }
+        task.resume()
+      }
+      #else
       let (data, _ /* urlResponse */) = try await session.data(for: urlRequest)
+      #endif
       let response = try decoder.decode(R.self, from: data)
       return response
     }

@@ -6,7 +6,8 @@ import PackageDescription
 let package = Package(
     name: "Web3Kit",
     platforms: [
-      .macOS(.v14),
+      .macOS(.v10_15),
+      .iOS(.v13),
     ],
     products: [
       .library(name: "Web3Kit", targets: ["Web3Kit"]),

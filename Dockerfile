@@ -1,4 +1,4 @@
-FROM swift:5.2-development as builder
+FROM swift as builder
 WORKDIR /root
 COPY ./Package.swift ./Package.swift
 COPY ./Sources ./Sources

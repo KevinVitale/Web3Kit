@@ -95,7 +95,7 @@ final class EthTests: XCTestCase {
   }
   
   func testCode() async throws {
-    let web3 = Web3Client(.localHost)
+    let web3 = Web3Client(.localNode)
     let usdc = "0xa2327a938Febf5FEC13baCFb16Ae10EcBc4cbDCF"
     let code = try await web3.eth(request: .code(for: usdc)).result ?? ""
     print(code)
