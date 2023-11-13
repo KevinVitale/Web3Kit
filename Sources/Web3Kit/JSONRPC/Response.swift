@@ -1,9 +1,17 @@
 import Foundation
 import AnyCodable
 
+public protocol JSONRPCResponse: Identifiable, Decodable {
+  associatedtype DecodedType: Decodable, Equatable
+  
+  var jsonrpc: String { get }
+  var result: DecodedType? { get }
+  var error: JSONRPC.Error? { get }
+}
+
 extension JSONRPC {
   @dynamicMemberLookup
-  public struct Response<T: Decodable>: Identifiable, Decodable, Equatable where T: Equatable {
+  public struct Response<T: Decodable>: JSONRPCResponse where T: Equatable {
     public typealias DecodedType = T
     
     private enum CodingKeys: String, CodingKey {
@@ -39,23 +47,7 @@ extension JSONRPC {
   }
 }
 
-extension Collection where Element == JSONRPC.Response<AnyCodable> {
-  public var errors: [Element] {
-    self.filter({ $0.error != nil })
-  }
-  
-  public var results: [Element.DecodedType] {
-    self.compactMap({ $0.result })
-  }
-  
-  public func `throw`() throws {
-    if let error = self.compactMap({ $0.error }).first {
-      throw error
-    }
-  }
-}
-
-extension Collection where Element == JSONRPC.Response<[String:AnyCodable]> {
+extension Collection where Element: JSONRPCResponse {
   public var errors: [Element] {
     self.filter({ $0.error != nil })
   }

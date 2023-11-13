@@ -84,3 +84,31 @@ extension JSONRPC.Request where API == Eth {
     .init("getTransactionByHash", parameters: [hash], id: requestId)
   }
 }
+
+extension Client.Connection where API == Eth {
+  public func balance(for accounts: String...) async throws -> [(String, JSONRPC.Response<String>)] {
+    let requests = accounts.enumerated().map({ (offset, element) in JSONRPC.Request<Eth, String>.balance(for: element, requestId: offset) })
+    return Array(zip(accounts, try await self(request: requests)))
+  }
+  
+  public func balance(for accounts: [String]? = nil) async throws -> [(String, JSONRPC.Response<String>)] {
+    var accounts = accounts
+    if accounts == nil {
+      accounts = try await (self(request: .accounts()).result ?? [])
+    }
+    let requests = accounts?.enumerated().map({ (offset, element) in JSONRPC.Request<Eth, String>.balance(for: element, requestId: offset) }) ?? []
+    return Array(zip(accounts ?? [], try await self(request: requests)))
+  }
+}
+
+extension Client.Connection where API == Eth {
+  public func block(_ blocks: BlockParameter..., fullResponse: Bool = false) async throws -> [(BlockParameter, JSONRPC.Response<[String:AnyCodable]>)] {
+    let requests = blocks.enumerated().map({ (offset, element) in JSONRPC.Request<Eth, String>.block(element, fullResponse: fullResponse, requestId: offset) })
+    return Array(zip(blocks, try await self(request: requests)))
+  }
+  
+  public func block(_ blocks: [BlockParameter], fullResponse: Bool = false) async throws -> [(BlockParameter, JSONRPC.Response<[String:AnyCodable]>)] {
+    let requests = blocks.enumerated().map({ (offset, element) in JSONRPC.Request<Eth, String>.block(element, fullResponse: fullResponse, requestId: offset) })
+    return Array(zip(blocks, try await self(request: requests)))
+  }
+}

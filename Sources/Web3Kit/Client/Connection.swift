@@ -88,17 +88,18 @@ extension Client {
     }
     
     @discardableResult
+    public func callAsFunction<T: Codable>(request: [Request<T>]) async throws -> [Response<T>] {
+      try await self.request(request)
+    }
+    
+    @discardableResult
     public func callAsFunction<T>(request: Request<T>...) async throws -> [Response<T>] {
-      let response: [Response<T>] = try await self.request(request)
-      
-      return response
+      try await self.request(request)
     }
     
     @discardableResult
     public func callAsFunction(request: Request<AnyCodable>...) async throws -> [Response<AnyCodable>] {
-      let response: [Response<AnyCodable>] = try await self.request(request)
-      
-      return response
+      try await self.request(request)
     }
   }
 }

@@ -157,4 +157,32 @@ final class EthTests: XCTestCase {
       print(try $0.prettyPrinted())
     })
   }
+  
+  func testAccountsAndBalances() async throws {
+    let accounts = try await web3.eth(request: .accounts()).result ?? []
+    let requests = accounts.map({ JSONRPC.Request<Eth, String>.balance(for: $0) })
+    let balances = try await web3.eth(request: requests)
+    for balance in balances.compactMap({ $0.result }) {
+      print(balance(as: .wei).to(.ether))
+    }
+  }
+  
+  func testAccountsAndBalancesExtension() async throws {
+    let response = try await web3.eth.balance(for: accounts)
+    for (index, (account, response)) in response.enumerated() {
+      let balance = response.result ?? ""
+      print("Request #\(index): \(account): \(balance(as: .wei).to(.ether))")
+    }
+  }
+  
+  func testBlocksExtension() async throws {
+    for (index, (block, response)) in try await web3.eth.block(.earliest, .pending, .latest).enumerated() {
+      let blockJSON = try response.result?.prettyPrinted() ?? ""
+      print("Request #\(index): \(block)\n\(blockJSON)")
+    }
+  }
+  
+  func testVersion() async throws {
+    print(try await web3(request: "version").results)
+  }
 }
