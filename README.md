@@ -9,7 +9,7 @@
 To use the `Web3Kit` library in a Swift Package Manager (SPM) project, add the following line to the _dependencies_ in you `Package.swift` file:
     
 ```swift
-.package(url: "https://github.com/KevinVitale/Web3Kit", from: "0.0.1"),
+.package(url: "https://github.com/KevinVitale/Web3Kit", from: "0.0.2"),
 ```
 
 The `Web3Kit` library is under active development, and while attempts are made to maintain source-stability, this is not guaranteed between minor versions. You may specify `.upToNextMinor(from:)`, instead of `from(_:)`, if you need to be at a specific version.
