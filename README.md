@@ -35,11 +35,11 @@ For any request you want to make, call `(request:parameters:)` with a string lit
 let web3 = Web3Client("127.0.0.1:8545")
 
 // Calls 'web3_sha3'
-let result = try await web3(request: "sha3", parameters: ["0xdeadbeef").result
+let result = try await web3(request: "sha3", parameters: ["0xdeadbeef"]).result
 print(result ?? "")
 ```
 
-For convenience, most requests have statically defined equivalents:
+For convenience, most requests have statically defined equivalents. For the above example:
 
 ```swift
 // Create a client
