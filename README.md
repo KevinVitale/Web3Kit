@@ -26,7 +26,7 @@ All this makes testing on _macOS_, _iOS_, or _Linux_ really simple.
 
 ### Example: Requests
 
-A goal for `Web3Kit` was to be small, yet flexible and expressive. 
+An architectura goal for `Web3Kit` is to be small, yet flexible and expressive. 
 
 For any request you want to make, call `(request:parameters:)` with a string literal:
 
